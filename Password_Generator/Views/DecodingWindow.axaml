@@ -7,7 +7,7 @@
         Title="DecodingWindow"
         Icon="/Assets/avalonia-logo.ico"
         WindowState="Maximized">
-<Grid ColumnDefinitions="Auto, *">
+<Grid ColumnDefinitions="Auto, *"> 
         <!-- Левая панель -->
         <StackPanel Grid.Column="0"
                     Margin="10"
