@@ -1,0 +1,105 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Password_Generator.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Password_Generator.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Password_Generator"
+        WindowState="Maximized">
+
+  <Grid ColumnDefinitions="Auto, *">
+        <!-- Левая панель с кнопками действий -->
+        <StackPanel Grid.Column="0"
+                    Margin="10"
+                    Spacing="10"
+                    VerticalAlignment="Top">
+            <Button Content="Генерация"
+                    Width="120"
+                    Background="White"
+                    HorizontalAlignment="Center"/>
+                    <!--Click="PasswordClick"--> 
+            <Button Content="Шифрование"
+                    Width="120"
+                    HorizontalAlignment="Center"
+                    Click="OnEncryptClick" />
+            <Button Content="Расшифровка"
+                    Click="onDecodingClick"
+                    Width="120"
+                    HorizontalAlignment="Center"/>
+                   <!-- Click="OnDecryptClick" -->
+        </StackPanel>
+
+        <!-- Правая панель с настройками и выводом -->
+        <StackPanel Grid.Column="1"
+                    Margin="10,10,20,10"
+                    Spacing="15">
+            <!-- Чекбоксы для выбора типов символов -->
+            <WrapPanel>
+                <CheckBox x:Name="UpperCaseCheckBox" Content="Заглавная буква"  Margin="0,0,15,0" />
+                <CheckBox x:Name="LowerCaseCheckBox" Content="Строчная буква" Margin="0,0,15,0" />
+                <CheckBox x:Name="DigitCheckBox" Content="Цифра" Margin="0,0,15,0" />
+                <CheckBox x:Name="SpecialCheckBox" Content="Спец символ" />
+            </WrapPanel>
+
+            <!-- Блок ввода длины пароля -->
+            <StackPanel Spacing="5">
+                <TextBlock Text="Длина пароля"
+                           FontWeight="Bold" />
+                <NumericUpDown Value="12"
+                               Minimum="1"
+                               Maximum="128"
+                               ShowButtonSpinner="False"
+                               Width="100"
+                               HorizontalAlignment="Left"
+                               x:Name="PasswordLengthNumericUpDown"/>
+            </StackPanel>
+
+            <!-- Выбор алфавита (латиница / кириллица) -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="15">
+                <RadioButton Content="Латиница"
+                             GroupName="Alphabet"
+                             IsChecked="True" 
+                             x:Name="LatinRadioButton"/>
+                <RadioButton Content="Кириллица"
+                             GroupName="Alphabet"
+                             x:Name="CyrillicRadioButton"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10">
+                <Button Content="Копировать"
+                        Click="onCopyClick"
+                        Width="100"/>
+            </StackPanel>
+
+            <!-- Крупный блок для вывода пароля -->
+            <Border BorderBrush="#FFCCCCCC"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Background="#FFF0F0F0"
+                    Height="120">
+                <TextBlock Name="PasswordOutput"
+                           Text="Сгенерированный пароль"
+                           FontSize="24"
+                           FontFamily="Courier New"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Margin="10" />
+            </Border>
+
+            <Button Content="Сгенерировать"
+        Width="150"
+        Height="40"
+        HorizontalAlignment="Center"
+        Click="OnGenerateClick"
+        FontSize="16"
+        FontWeight="Bold" />
+
+        </StackPanel>
+    </Grid>
+</Window>

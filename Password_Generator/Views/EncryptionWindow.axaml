@@ -1,0 +1,81 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Password_Generator.EncryptionWindow"
+        Title="EncryptionWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        WindowState="Maximized">
+        
+ <Grid ColumnDefinitions="Auto, *">
+        <!-- Левая панель -->
+        <StackPanel Grid.Column="0"
+                    Margin="10"
+                    Spacing="10"
+                    VerticalAlignment="Top">
+            <Button Content="Генерация"
+                    Width="120"
+                    HorizontalAlignment="Center"
+                    Click="onPasswordClick"/>
+            <Button Content="Шифрование"
+                    Background="White"
+                    Width="120"
+                    HorizontalAlignment="Center"/>
+            <Button Content="Расшифровка"
+                    Click="onDecodingClick"
+                    Width="120"
+                    HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Правая панель -->
+        <StackPanel Grid.Column="1"
+                    Margin="10,10,20,10"
+                    Spacing="15">
+            <!-- Поле ввода пароля -->
+            <StackPanel Spacing="5">
+                <TextBlock Text="Введите пароль"
+                           FontWeight="Bold" />
+                <TextBox Name="PasswordTextBox"
+                         Height="30"
+                         Watermark="Введите текст для шифрования" />
+            </StackPanel>
+
+            <!-- Поле для ключа + кнопка генерации -->
+            <StackPanel Spacing="5">
+                <TextBlock Text="Ключ (необязательно)"
+                           FontWeight="Bold" />
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBox Name="KeyTextBox"
+                             Grid.Column="0"
+                             Height="30"
+                             Text=""
+                             Watermark="Введите ключ или сгенерируйте" />
+                </Grid>
+            </StackPanel>
+
+            <Button Click="onGenerate_Click"
+                    Content="Сгенерировать"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+
+            <!-- Поле вывода результата -->
+            <StackPanel Spacing="5">
+                <TextBlock Text="Результат"
+                           FontWeight="Bold" />
+                <TextBlock Name="OutputTextBox"
+                         Height="60"
+                         Background="#FFF0F0F0" />
+            </StackPanel>
+
+            
+            <!-- Кнопка копирования -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10">
+                <Button Content="Копировать"
+                        Click="onCopyClick"
+                        Width="100"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
