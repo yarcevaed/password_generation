@@ -22,75 +22,74 @@ namespace Password_Generator.Views
             password_result = "";
             int passwordLength = (int)PasswordLengthNumericUpDown.Value;
 
-            // Проверка корректности длины
+            // длина
             if (passwordLength <= 0)
             {
                 PasswordOutput.Text = "Длина должна быть больше 0";
                 return;
             }
 
-            // Определяем, какой алфавит выбран (латиница или кириллица)
+            // алфавит 
             bool useLatin = LatinRadioButton.IsChecked == true;
             bool useCyrillic = CyrillicRadioButton.IsChecked == true;
             // Если ни один не выбран, по умолчанию используем латиницу
             if (!useLatin && !useCyrillic)
                 useLatin = true;
 
-            // Списки символов для каждого критерия
+            // Списки символов 
             List<char> upperChars = new List<char>();
             List<char> lowerChars = new List<char>();
             List<char> digitChars = new List<char>();
             List<char> specialChars = new List<char> { '.', '@', '!', '#', '$', '&', '%', '*', '/' };
 
-            // Заполняем списки в зависимости от выбранного алфавита
+            // Заполняем списки
             if (useLatin)
             {
-                upperChars.AddRange(Enumerable.Range('A', 26).Select(c => (char)c)); // 'A' = 65
-                lowerChars.AddRange(Enumerable.Range('a', 26).Select(c => (char)c)); // 'a' = 97
+                upperChars.AddRange(Enumerable.Range('A', 26).Select(c => (char)c)); 
+                lowerChars.AddRange(Enumerable.Range('a', 26).Select(c => (char)c)); 
             }
             else if (useCyrillic)
             {
-                // Кириллица в Unicode: заглавные А-Я (1040–1071), строчные а-я (1072–1103)
-                upperChars.AddRange(Enumerable.Range(1040, 32).Select(c => (char)c)); // 1040 = 'А'
-                lowerChars.AddRange(Enumerable.Range(1072, 32).Select(c => (char)c)); // 1072 = 'а'
+                
+                upperChars.AddRange(Enumerable.Range(1040, 32).Select(c => (char)c)); 
+                lowerChars.AddRange(Enumerable.Range(1072, 32).Select(c => (char)c)); 
             }
 
-            // Собираем флаги выбранных критериев
+            
             bool needUpper = UpperCaseCheckBox.IsChecked == true;
             bool needLower = LowerCaseCheckBox.IsChecked == true;
             bool needDigit = DigitCheckBox.IsChecked == true;
             bool needSpecial = SpecialCheckBox.IsChecked == true;
 
-            // Считаем количество выбранных критериев
+            // количество критериев
             int criteriaCount = 0;
             if (needUpper) criteriaCount++;
             if (needLower) criteriaCount++;
             if (needDigit) criteriaCount++;
             if (needSpecial) criteriaCount++;
 
-            // Если ни один критерий не выбран – генерируем только из латиницы или кириллицы?
-            // Но по условию, если ничего не выбрано, то, вероятно, нужно использовать все? Оставим проверку.
+            
             if (criteriaCount == 0)
             {
                 PasswordOutput.Text = "Выберите хотя бы один критерий";
                 return;
             }
 
-            // Если длина меньше количества критериев – невозможно гарантировать наличие каждого
+            
             if (passwordLength < criteriaCount)
             {
                 PasswordOutput.Text = $"Длина пароля ({passwordLength}) меньше числа выбранных критериев ({criteriaCount})";
                 return;
             }
 
-            // Собираем общий пул символов (из всех выбранных типов)
+            
             List<char> allChars = new List<char>();
             if (needUpper) allChars.AddRange(upperChars);
             if (needLower) allChars.AddRange(lowerChars);
             if (needDigit) allChars.AddRange(Enumerable.Range('0', 10).Select(c => (char)c)); // '0' = 48
             if (needSpecial) allChars.AddRange(specialChars);
 
-            // Если пул пуст – ошибка (такого быть не должно, но на всякий случай)
+            
             if (allChars.Count == 0)
             {
                 PasswordOutput.Text = "Нет доступных символов для генерации";
@@ -99,14 +98,14 @@ namespace Password_Generator.Views
 
             Random rand = new Random();
 
-            // 1. Формируем список обязательных символов (по одному из каждого выбранного типа)
+            
             List<char> mandatory = new List<char>();
             if (needUpper) mandatory.Add(upperChars[rand.Next(upperChars.Count)]);
             if (needLower) mandatory.Add(lowerChars[rand.Next(lowerChars.Count)]);
             if (needDigit) mandatory.Add((char)rand.Next('0', ':')); // '0'..'9'
             if (needSpecial) mandatory.Add(specialChars[rand.Next(specialChars.Count)]);
 
-            // 2. Заполняем оставшиеся позиции случайными символами из общего пула
+            // Заполняемпозиции случайными символами
             int remaining = passwordLength - mandatory.Count;
             List<char> result = new List<char>(mandatory);
             for (int i = 0; i < remaining; i++)
@@ -114,7 +113,7 @@ namespace Password_Generator.Views
                 result.Add(allChars[rand.Next(allChars.Count)]);
             }
 
-            // 3. Перемешиваем результирующий список (Fisher-Yates)
+            // 3. Перемешиваем список 
             for (int i = result.Count - 1; i > 0; i--)
             {
                 int j = rand.Next(i + 1);

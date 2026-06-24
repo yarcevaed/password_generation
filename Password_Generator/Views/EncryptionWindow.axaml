@@ -32,7 +32,7 @@
         <StackPanel Grid.Column="1"
                     Margin="10,10,20,10"
                     Spacing="15">
-            <!-- Поле ввода пароля -->
+            <!-- ввод пароля -->
             <StackPanel Spacing="5">
                 <TextBlock Text="Введите пароль"
                            FontWeight="Bold" />
@@ -64,8 +64,10 @@
                 <TextBlock Text="Результат"
                            FontWeight="Bold" />
                 <TextBlock Name="OutputTextBox"
-                         Height="60"
-                         Background="#FFF0F0F0" />
+                           Foreground="Black"
+                           FontFamily="Courier New"
+                           Height="60"
+                           Background="#FFF0F0F0" />
             </StackPanel>
 
             

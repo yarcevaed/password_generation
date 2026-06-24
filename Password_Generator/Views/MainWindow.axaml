@@ -29,14 +29,14 @@
                     Click="onDecodingClick"
                     Width="120"
                     HorizontalAlignment="Center"/>
-                   <!-- Click="OnDecryptClick" -->
+                   
         </StackPanel>
 
         <!-- Правая панель с настройками и выводом -->
         <StackPanel Grid.Column="1"
                     Margin="10,10,20,10"
                     Spacing="15">
-            <!-- Чекбоксы для выбора типов символов -->
+            <!--  тип символов -->
             <WrapPanel>
                 <CheckBox x:Name="UpperCaseCheckBox" Content="Заглавная буква"  Margin="0,0,15,0" />
                 <CheckBox x:Name="LowerCaseCheckBox" Content="Строчная буква" Margin="0,0,15,0" />
@@ -44,7 +44,7 @@
                 <CheckBox x:Name="SpecialCheckBox" Content="Спец символ" />
             </WrapPanel>
 
-            <!-- Блок ввода длины пароля -->
+            <!-- ввод длины пароля -->
             <StackPanel Spacing="5">
                 <TextBlock Text="Длина пароля"
                            FontWeight="Bold" />
@@ -57,7 +57,7 @@
                                x:Name="PasswordLengthNumericUpDown"/>
             </StackPanel>
 
-            <!-- Выбор алфавита (латиница / кириллица) -->
+            <!-- Выбор алфавита  -->
             <StackPanel Orientation="Horizontal"
                         Spacing="15">
                 <RadioButton Content="Латиница"
@@ -86,6 +86,8 @@
                            Text="Сгенерированный пароль"
                            FontSize="24"
                            FontFamily="Courier New"
+                           Foreground="Black"
+
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            TextWrapping="Wrap"
