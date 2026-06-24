@@ -6,102 +6,300 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Password_Generator.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/i.png"
         Title="Password_Generator"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Background="#F5F7FA"
+        RequestedThemeVariant="Light"> <!-- Принудительно светлая тема, чтобы не зависеть от системной -->
 
-  <Grid ColumnDefinitions="Auto, *">
-        <!-- Левая панель с кнопками действий -->
-        <StackPanel Grid.Column="0"
-                    Margin="10"
-                    Spacing="10"
-                    VerticalAlignment="Top">
-            <Button Content="Генерация"
-                    Width="120"
-                    Background="White"
-                    HorizontalAlignment="Center"/>
-                    <!--Click="PasswordClick"--> 
-            <Button Content="Шифрование"
-                    Width="120"
-                    HorizontalAlignment="Center"
-                    Click="OnEncryptClick" />
-            <Button Content="Расшифровка"
-                    Click="onDecodingClick"
-                    Width="120"
-                    HorizontalAlignment="Center"/>
-                   
-        </StackPanel>
+    <Window.Styles>
+        <!-- ===== КНОПКИ ===== -->
+        <Style Selector="Button">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="#E2E8F0" />
+            <Setter Property="Foreground" Value="#2D3748" />
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#CBD5E0" />
+            <Setter Property="Foreground" Value="#1A202C" />
+        </Style>
+        <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="#A0AEC0" />
+            <Setter Property="Foreground" Value="#1A202C" />
+        </Style>
 
-        <!-- Правая панель с настройками и выводом -->
+        <!-- ===== ТЕКСТОВЫЕ ПОЛЯ ===== -->
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#D0D7DE" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="#4A90D9" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+        <Style Selector="TextBox:pointerover">
+            <Setter Property="Background" Value="#F7FAFC" />
+        </Style>
+
+        <!-- ===== ТЕКСТОВЫЕ БЛОКИ ===== -->
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#2D3748" />
+        </Style>
+
+        <!-- ===== CHECKBOX ===== -->
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="4,2" />
+        </Style>
+        <Style Selector="CheckBox:pointerover">
+            <Setter Property="Background" Value="#EDF2F7" />
+            <Setter Property="Foreground" Value="#1A202C" />
+        </Style>
+        <Style Selector="CheckBox:pressed">
+            <Setter Property="Background" Value="#E2E8F0" />
+        </Style>
+        <Style Selector="CheckBox:checked">
+            <Setter Property="Foreground" Value="#2B6CB0" />
+        </Style>
+
+        <!-- ===== RADIOBUTTON ===== -->
+        <Style Selector="RadioButton">
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="4,2" />
+        </Style>
+        <Style Selector="RadioButton:pointerover">
+            <Setter Property="Background" Value="#EDF2F7" />
+            <Setter Property="Foreground" Value="#1A202C" />
+        </Style>
+        <Style Selector="RadioButton:pressed">
+            <Setter Property="Background" Value="#E2E8F0" />
+        </Style>
+        <Style Selector="RadioButton:checked">
+            <Setter Property="Foreground" Value="#2B6CB0" />
+        </Style>
+
+        <!-- ===== NUMERICUPDOWN ===== -->
+        <Style Selector="NumericUpDown">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#D0D7DE" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="NumericUpDown:focus">
+            <Setter Property="BorderBrush" Value="#4A90D9" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+        <Style Selector="NumericUpDown:pointerover">
+            <Setter Property="Background" Value="#F7FAFC" />
+        </Style>
+
+        <!-- ===== LISTBOX ===== -->
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#2D3748" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Margin" Value="0,2" />
+        </Style>
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="Background" Value="#E2E8F0" />
+            <Setter Property="Foreground" Value="#1A202C" />
+        </Style>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="#4A90D9" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="ListBoxItem:selected:pointerover">
+            <Setter Property="Background" Value="#3182CE" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="Auto, *" Background="#F5F7FA">
+
+        <!-- ====== Левая панель ====== -->
+        <Border Grid.Column="0"
+                Width="180"
+                Background="White"
+                CornerRadius="0 12 12 0"
+                >
+            <Grid RowDefinitions="Auto, *">
+                <StackPanel Grid.Row="0"
+                            Margin="20,30,20,10"
+                            Spacing="12"
+                            VerticalAlignment="Top">
+                    <TextBlock Text=" Меню"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1A202C"
+                               Margin="0,0,0,8" />
+
+                    <Button Content=" Генерация"
+                            HorizontalAlignment="Stretch"
+                            Background="#4A90D9"
+                            Foreground="White"
+                            FontWeight="SemiBold" />
+                    <!-- Если нужно, можно добавить Click="..." -->
+
+                    <Button Content=" Шифрование"
+                            Background="#E2E8F0"
+                            Foreground="#2D3748"
+                            Click="OnEncryptClick"
+                            HorizontalAlignment="Stretch"
+                            FontWeight="SemiBold" />
+
+                    <Button Content=" Расшифровка"
+                            Click="onDecodingClick"
+                            HorizontalAlignment="Stretch"
+                            Background="#E2E8F0"
+                            Foreground="#2D3748"
+                            FontWeight="SemiBold" />
+
+                    <Border Height="1"
+                            Background="#E2E8F0"
+                            Margin="0,12,0,8" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Margin="20,0,20,20"
+                            Spacing="6">
+                    <TextBlock Text="Сохранённые пароли"
+                               FontWeight="SemiBold"
+                               FontSize="13"
+                               Foreground="#2D3748" />
+                    <ScrollViewer MaxHeight="200"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ListBox x:Name="SavedPasswordsList"
+                                 Background="Transparent"
+                                 BorderThickness="0" />
+                    </ScrollViewer>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ====== Правая панель ====== -->
         <StackPanel Grid.Column="1"
-                    Margin="10,10,20,10"
-                    Spacing="15">
-            <!--  тип символов -->
+                    Margin="40,30,50,30"
+                    Spacing="18">
+
+            <TextBlock Text="Генерация пароля"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="#1A202C"
+                       Margin="0,0,0,4" />
+            <TextBlock Text="Выберите нужные критерии и сгенерируйте пароль"
+                       FontSize="14"
+                       Foreground="#718096"
+                       Margin="0,-8,0,12" />
+
+            <!-- CheckBox -->
             <WrapPanel>
-                <CheckBox x:Name="UpperCaseCheckBox" Content="Заглавная буква"  Margin="0,0,15,0" />
-                <CheckBox x:Name="LowerCaseCheckBox" Content="Строчная буква" Margin="0,0,15,0" />
-                <CheckBox x:Name="DigitCheckBox" Content="Цифра" Margin="0,0,15,0" />
-                <CheckBox x:Name="SpecialCheckBox" Content="Спец символ" />
+                <CheckBox x:Name="UpperCaseCheckBox"
+                          Content="Заглавная буква"
+                          Margin="0,0,15,0" />
+                <CheckBox x:Name="LowerCaseCheckBox"
+                          Content="Строчная буква"
+                          Margin="0,0,15,0" />
+                <CheckBox x:Name="DigitCheckBox"
+                          Content="Цифра"
+                          Margin="0,0,15,0" />
+                <CheckBox x:Name="SpecialCheckBox"
+                          Content="Спец символ" />
             </WrapPanel>
 
-            <!-- ввод длины пароля -->
-            <StackPanel Spacing="5">
+            <!-- Длина пароля -->
+            <StackPanel Spacing="6">
                 <TextBlock Text="Длина пароля"
-                           FontWeight="Bold" />
-                <NumericUpDown Value="12"
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Foreground="#2D3748" />
+                <NumericUpDown x:Name="PasswordLengthNumericUpDown"
+                               Value="12"
                                Minimum="1"
                                Maximum="128"
                                ShowButtonSpinner="False"
-                               Width="100"
+                               Width="120"
                                HorizontalAlignment="Left"
-                               x:Name="PasswordLengthNumericUpDown"/>
+                               Background="White"
+                               BorderBrush="#D0D7DE"
+                               CornerRadius="8"
+                               Padding="12,10" />
             </StackPanel>
 
-            <!-- Выбор алфавита  -->
+            <!-- RadioButton -->
             <StackPanel Orientation="Horizontal"
-                        Spacing="15">
-                <RadioButton Content="Латиница"
+                        Spacing="25">
+                <RadioButton x:Name="LatinRadioButton"
+                             Content="Латиница"
                              GroupName="Alphabet"
-                             IsChecked="True" 
-                             x:Name="LatinRadioButton"/>
-                <RadioButton Content="Кириллица"
+                             IsChecked="True"
+                             FontWeight="SemiBold" />
+                <RadioButton x:Name="CyrillicRadioButton"
+                             Content="Кириллица"
                              GroupName="Alphabet"
-                             x:Name="CyrillicRadioButton"/>
+                             FontWeight="SemiBold" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal"
-                        Spacing="10">
-                <Button Content="Копировать"
-                        Click="onCopyClick"
-                        Width="100"/>
+            <!-- Кнопка копировать -->
+            <Button Content="Копировать"
+                    Click="onCopyClick"
+                    Width="140"
+                    HorizontalAlignment="Left"
+                    Padding="24,10" />
+
+            <!-- Вывод пароля -->
+            <StackPanel Spacing="6">
+                <TextBlock Text="Сгенерированный пароль"
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Foreground="#2D3748" />
+                <Border Background="#FFFFFF"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        BorderBrush="#D0D7DE"
+                        Padding="15,12"
+                        Height="120">
+                    <TextBlock x:Name="PasswordOutput"
+                               Text="Сгенерированный пароль"
+                               FontSize="24"
+                               FontFamily="Courier New"
+                               Foreground="#1A202C"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"
+                               Margin="10" />
+                </Border>
             </StackPanel>
 
-            <!-- Крупный блок для вывода пароля -->
-            <Border BorderBrush="#FFCCCCCC"
-                    BorderThickness="1"
-                    CornerRadius="4"
-                    Background="#FFF0F0F0"
-                    Height="120">
-                <TextBlock Name="PasswordOutput"
-                           Text="Сгенерированный пароль"
-                           FontSize="24"
-                           FontFamily="Courier New"
-                           Foreground="Black"
-
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           TextWrapping="Wrap"
-                           Margin="10" />
-            </Border>
-
+            <!-- Кнопка генерации -->
             <Button Content="Сгенерировать"
-        Width="150"
-        Height="40"
-        HorizontalAlignment="Center"
-        Click="OnGenerateClick"
-        FontSize="16"
-        FontWeight="Bold" />
-
+                    Width="180"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    Click="OnGenerateClick"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Padding="24,12" />
         </StackPanel>
     </Grid>
 </Window>

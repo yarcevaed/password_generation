@@ -6,78 +6,177 @@
         x:Class="Password_Generator.EncryptionWindow"
         Title="EncryptionWindow"
         Icon="/Assets/avalonia-logo.ico"
-        WindowState="Maximized">
-        
- <Grid ColumnDefinitions="Auto, *">
-        <!-- Левая панель -->
-        <StackPanel Grid.Column="0"
-                    Margin="10"
-                    Spacing="10"
-                    VerticalAlignment="Top">
-            <Button Content="Генерация"
-                    Width="120"
-                    HorizontalAlignment="Center"
-                    Click="onPasswordClick"/>
-            <Button Content="Шифрование"
-                    Background="White"
-                    Width="120"
-                    HorizontalAlignment="Center"/>
-            <Button Content="Расшифровка"
-                    Click="onDecodingClick"
-                    Width="120"
-                    HorizontalAlignment="Center"/>
-        </StackPanel>
+        WindowState="Maximized"
+        Background="#F5F7FA">
 
-        <!-- Правая панель -->
+    <Window.Styles>
+        <!-- Buttons -->
+        <Style Selector="Button">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Opacity" Value="0.85" />
+        </Style>
+        <Style Selector="Button:active">
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+
+        <!-- TextBoxes -->
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#D0D7DE" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="#4A90D9" />
+        </Style>
+
+        <!-- TextBlocks -->
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#2D3748" />
+        </Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="Auto, *" Background="#F5F7FA">
+
+        <!-- ====== Левая панель (с тенью через Border) ====== -->
+        <Border Grid.Column="0"
+                Width="180"
+                Background="White"
+                
+                CornerRadius="0 12 12 0">
+            <StackPanel Margin="20,30,20,20"
+                        Spacing="12"
+                        VerticalAlignment="Top">
+
+                <TextBlock Text=" Меню"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="#1A202C"
+                           Margin="0,0,0,8" />
+
+                <Button Content=" Генерация"
+                        Click="onPasswordClick"
+                        HorizontalAlignment="Stretch"
+                        Background="#E2E8F0"
+                        Foreground="#2D3748"
+                        FontWeight="SemiBold" />
+
+                <Button Content=" Шифрование"
+                        
+                        Background="#4A90D9"
+                        Foreground="White"
+                        HorizontalAlignment="Stretch"
+                        FontWeight="SemiBold" />
+
+                <Button Content=" Расшифровка"
+                        Click="onDecodingClick"
+                        HorizontalAlignment="Stretch"
+                        Background="#E2E8F0"
+                        Foreground="#2D3748"
+                        FontWeight="SemiBold" />
+
+                <!-- Разделитель -->
+                <Border Height="1"
+                        Background="#E2E8F0"
+                        Margin="0,12,0,8" />
+
+            </StackPanel>
+        </Border>
+
+        <!-- ====== Правая панель ====== -->
         <StackPanel Grid.Column="1"
-                    Margin="10,10,20,10"
-                    Spacing="15">
-            <!-- ввод пароля -->
-            <StackPanel Spacing="5">
+                    Margin="40,30,50,30"
+                    Spacing="18">
+
+            <!-- Заголовок -->
+            <TextBlock Text="Управление паролями"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="#1A202C"
+                       Margin="0,0,0,4" />
+            <TextBlock Text="Введите данные и выполните нужное действие"
+                       FontSize="14"
+                       Foreground="#718096"
+                       Margin="0,-8,0,12" />
+
+            <!-- ====== Поле ввода пароля ====== -->
+            <StackPanel Spacing="6">
                 <TextBlock Text="Введите пароль"
-                           FontWeight="Bold" />
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Foreground="#2D3748" />
                 <TextBox Name="PasswordTextBox"
-                         Height="30"
-                         Watermark="Введите текст для шифрования" />
+                         Height="42"
+                         Watermark="Введите текст для шифрования"
+                         Background="White"
+                         BorderBrush="#D0D7DE" />
             </StackPanel>
 
-            <!-- Поле для ключа + кнопка генерации -->
-            <StackPanel Spacing="5">
+            <!-- ====== Поле ключа ====== -->
+            <StackPanel Spacing="6">
                 <TextBlock Text="Ключ (необязательно)"
-                           FontWeight="Bold" />
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Foreground="#2D3748" />
                 <Grid ColumnDefinitions="*, Auto">
                     <TextBox Name="KeyTextBox"
                              Grid.Column="0"
-                             Height="30"
-                             Text=""
-                             Watermark="Введите ключ или сгенерируйте" />
+                             Height="42"
+                             Watermark="Введите ключ"
+                             Background="White"
+                             BorderBrush="#D0D7DE" />
                 </Grid>
             </StackPanel>
 
+            <!-- ====== Кнопка генерации ключа ====== -->
             <Button Click="onGenerate_Click"
-                    Content="Сгенерировать"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"/>
+                    Content="🔐 Зашифровать"
+                    HorizontalAlignment="Left"
+                    Background="LightGray"
+                    Foreground="#2D3748"
+                    FontWeight="SemiBold"
+                    Padding="20,10" />
 
-            <!-- Поле вывода результата -->
-            <StackPanel Spacing="5">
+            <!-- ====== Поле вывода результата ====== -->
+            <StackPanel Spacing="6">
                 <TextBlock Text="Результат"
-                           FontWeight="Bold" />
-                <TextBlock Name="OutputTextBox"
-                           Foreground="Black"
-                           FontFamily="Courier New"
-                           Height="60"
-                           Background="#FFF0F0F0" />
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           Foreground="#2D3748" />
+                <Border Background="#FFFFFF"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        BorderBrush="#D0D7DE"
+                        Padding="12,8">
+                    <TextBlock Name="OutputTextBox"
+                               Foreground="#1A202C"
+                               FontFamily="Courier New"
+                               FontSize="14"
+                               Height="60"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center" />
+                </Border>
             </StackPanel>
 
-            
-            <!-- Кнопка копирования -->
-            <StackPanel Orientation="Horizontal"
-                        Spacing="10">
-                <Button Content="Копировать"
-                        Click="onCopyClick"
-                        Width="100"/>
-            </StackPanel>
+            <!-- ====== Кнопка копирования ====== -->
+            <Button Content="📋 Копировать"
+                    Click="onCopyClick"
+                    HorizontalAlignment="Left"
+                    Background="#38A169"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    Padding="24,10"
+                    Width="160" />
+
         </StackPanel>
     </Grid>
 </Window>
