@@ -109,30 +109,7 @@
         </Style>
 
         <!-- ===== LISTBOX ===== -->
-        <Style Selector="ListBox">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-        </Style>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="#2D3748" />
-            <Setter Property="Padding" Value="8,6" />
-            <Setter Property="CornerRadius" Value="4" />
-            <Setter Property="Margin" Value="0,2" />
-        </Style>
-        <Style Selector="ListBoxItem:pointerover">
-            <Setter Property="Background" Value="#E2E8F0" />
-            <Setter Property="Foreground" Value="#1A202C" />
-        </Style>
-        <Style Selector="ListBoxItem:selected">
-            <Setter Property="Background" Value="#4A90D9" />
-            <Setter Property="Foreground" Value="White" />
-        </Style>
-        <Style Selector="ListBoxItem:selected:pointerover">
-            <Setter Property="Background" Value="#3182CE" />
-            <Setter Property="Foreground" Value="White" />
-        </Style>
+
     </Window.Styles>
 
     <Grid ColumnDefinitions="Auto, *" Background="#F5F7FA">
@@ -178,21 +155,6 @@
                     <Border Height="1"
                             Background="#E2E8F0"
                             Margin="0,12,0,8" />
-                </StackPanel>
-
-                <StackPanel Grid.Row="1"
-                            Margin="20,0,20,20"
-                            Spacing="6">
-                    <TextBlock Text="Сохранённые пароли"
-                               FontWeight="SemiBold"
-                               FontSize="13"
-                               Foreground="#2D3748" />
-                    <ScrollViewer MaxHeight="200"
-                                  VerticalScrollBarVisibility="Auto">
-                        <ListBox x:Name="SavedPasswordsList"
-                                 Background="Transparent"
-                                 BorderThickness="0" />
-                    </ScrollViewer>
                 </StackPanel>
             </Grid>
         </Border>

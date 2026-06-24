@@ -1,152 +1,231 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Password_Generator.Views;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
-namespace Password_Generator;
-
-public partial class EncryptionWindow : Window
+namespace Password_Generator
 {
-
-    string ready_password = "";
-    public EncryptionWindow()
+    public partial class EncryptionWindow : Window
     {
-        InitializeComponent();
-    }
-    private int ReduceToDigit(string input)
-    {
-        if (int.TryParse(input, out int number))
+        // Путь к JSON-файлу
+        private readonly string _jsonFilePath = "encrypted_passwords.json";
+        // Список сохранённых записей
+        private List<PasswordEntry> _passwordEntries = new();
+
+        public EncryptionWindow()
         {
-            while (number >= 10)
-            {
-                int sum = 0;
-                while (number > 0)
-                {
-                    sum += number % 10;
-                    number /= 10;
-                }
-                number = sum;
-            }
-            return number;
+            InitializeComponent();
+            LoadPasswordsFromJson();
+            UpdateSavedPasswordsList();
         }
-        else
+
+        // ---------- Загрузка / сохранение JSON ----------
+        private void LoadPasswordsFromJson()
         {
-            int sumCodes = 0;
-            foreach (char ch in input)
-                sumCodes += (int)ch;
-
-            while (sumCodes >= 10)
+            try
             {
-                int sum = 0;
-                while (sumCodes > 0)
+                if (File.Exists(_jsonFilePath))
                 {
-                    sum += sumCodes % 10;
-                    sumCodes /= 10;
+                    string json = File.ReadAllText(_jsonFilePath, Encoding.UTF8);
+                    _passwordEntries = JsonSerializer.Deserialize<List<PasswordEntry>>(json)
+                                       ?? new List<PasswordEntry>();
                 }
-                sumCodes = sum;
+                else
+                {
+                    _passwordEntries = new List<PasswordEntry>();
+                }
             }
-            return sumCodes;
+            catch (Exception ex)
+            {
+                // В случае ошибки файл считается пустым
+                _passwordEntries = new List<PasswordEntry>();
+                Console.WriteLine($"Ошибка загрузки JSON: {ex.Message}");
+            }
         }
-    }
-    public void onGenerate_Click(object? sender, RoutedEventArgs e)
-    {
-        ready_password = "";
-        if (PasswordTextBox != null && KeyTextBox.Text != "")//шифр с ключом
+
+        private void SavePasswordsToJson()
         {
-            string password = PasswordTextBox.Text.ToString();
-            string key = KeyTextBox.Text.ToString(); 
-            int indent = 0;
-            List<char> new_password = new List<char>();
-            indent = ReduceToDigit(key);
-
-            for (int i = 0; i < password.Length; ++i)
+            try
             {
-                new_password.Add(' ');
-            }
-            for (int i = 0; i < password.Length; ++i)
-            {
-                int ascii_code = (int)password[i];
-                if (ascii_code + indent <= 255 && ascii_code + indent >= 32)
+                string json = JsonSerializer.Serialize(_passwordEntries, new JsonSerializerOptions
                 {
-                    new_password[i] = (char)(ascii_code + indent);
-                }
-                else if (ascii_code + indent > 255)
-                {
-                    new_password[i] = (char)(ascii_code + indent - (225 - 32));
-                }
-
+                    WriteIndented = true
+                });
+                File.WriteAllText(_jsonFilePath, json, Encoding.UTF8);
             }
-
-            foreach (var item in new_password)
+            catch (Exception ex)
             {
-                ready_password += item.ToString();
+                Console.WriteLine($"Ошибка сохранения JSON: {ex.Message}");
             }
-
-            OutputTextBox.Text = ready_password;
-
         }
-        else if(PasswordTextBox != null && KeyTextBox.Text == "")//шифр без ключа
+
+        // ---------- Обновление списка в левой панели ----------
+        private void UpdateSavedPasswordsList()
         {
-            string password = PasswordTextBox.Text.ToString();
-            List<char> new_password = new List<char>();
-            for (int i = 0; i < password.Length; ++i)
+            // Отображаем только зашифрованный текст (обрезанный для краткости)
+            var displayItems = _passwordEntries
+                .Select((entry, index) =>
+                    $"{index + 1}. {Truncate(entry.EncryptedText, 30)}")
+                .ToList();
+            SavedPasswordsList.ItemsSource = displayItems;
+        }
+
+        private string Truncate(string text, int maxLength)
+        {
+            return text.Length <= maxLength ? text : text.Substring(0, maxLength) + "...";
+        }
+
+        // ---------- Шифрование (AES) ----------
+        private string Encrypt(string plainText, string key)
+        {
+            if (string.IsNullOrEmpty(plainText))
+                return string.Empty;
+
+            using (Aes aes = Aes.Create())
             {
-                new_password.Add(' ');
-            }
-            for(int i = 0; i < password.Length; ++i)
-            {
-                int ascii_code = (int)password[i];
-                if (ascii_code + 8 <= 255 && ascii_code + 8 >= 32)
+                // Генерируем соль и IV
+                byte[] salt = new byte[16];
+                using (var rng = RandomNumberGenerator.Create())
                 {
-                    new_password[i] = (char)(ascii_code + 8);
+                    rng.GetBytes(salt);
                 }
-                else if (ascii_code + 8 > 255)
+                // Получаем ключ из пароля
+                using (var deriveBytes = new Rfc2898DeriveBytes(key ?? "DefaultKey", salt, 10000))
                 {
-                    new_password[i] = (char)(ascii_code + 8 - (225 -  32)); 
+                    aes.Key = deriveBytes.GetBytes(32); // 256 бит
+                    aes.IV = deriveBytes.GetBytes(16);  // 128 бит
                 }
-                
+
+                using (var ms = new MemoryStream())
+                {
+                    // Записываем соль в начало
+                    ms.Write(salt, 0, salt.Length);
+                    using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (var sw = new StreamWriter(cs))
+                    {
+                        sw.Write(plainText);
+                    }
+                    return Convert.ToBase64String(ms.ToArray());
+                }
             }
-            
-            foreach(var item in new_password)
+        }
+
+        // ---------- Расшифровка (для справки) ----------
+        private string Decrypt(string cipherText, string key)
+        {
+            try
             {
-                ready_password += item.ToString();
+                byte[] fullCipher = Convert.FromBase64String(cipherText);
+                byte[] salt = new byte[16];
+                byte[] cipherData = new byte[fullCipher.Length - 16];
+                Array.Copy(fullCipher, 0, salt, 0, 16);
+                Array.Copy(fullCipher, 16, cipherData, 0, cipherData.Length);
+
+                using (Aes aes = Aes.Create())
+                {
+                    using (var deriveBytes = new Rfc2898DeriveBytes(key ?? "DefaultKey", salt, 10000))
+                    {
+                        aes.Key = deriveBytes.GetBytes(32);
+                        aes.IV = deriveBytes.GetBytes(16);
+                    }
+                    using (var ms = new MemoryStream(cipherData))
+                    using (var cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                    using (var sr = new StreamReader(cs))
+                    {
+                        return sr.ReadToEnd();
+                    }
+                }
+            }
+            catch
+            {
+                return "[Ошибка расшифровки]";
+            }
+        }
+
+        // ---------- Обработчики событий ----------
+
+        // Кнопка «Зашифровать»
+        public async void onGenerate_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            string plainText = PasswordTextBox.Text ?? "";
+            string key = KeyTextBox.Text ?? "";
+
+            if (string.IsNullOrWhiteSpace(plainText))
+            {
+                OutputTextBox.Text = "Введите текст для шифрования.";
+                return;
             }
 
-            OutputTextBox.Text = ready_password;
-        }
-        else
-        {
-            OutputTextBox.Text = "Введите пароль!";
-        }
-        
-        
-    }
-    private async void onCopyClick(object? sender, RoutedEventArgs e)
-    {
-        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-        if (clipboard is not null)
-        {
-            string textToCopy = ready_password;
-            await clipboard.SetTextAsync(textToCopy);
-        }
-        
-    }
-    private void onPasswordClick(object? sender, RoutedEventArgs e)
-    {
-        MainWindow main_window = new MainWindow();
-        main_window.Show();
-        this.Close();
-    }
+            string encrypted = Encrypt(plainText, key);
+            OutputTextBox.Text = encrypted;
 
-    private void onDecodingClick(object? sender, RoutedEventArgs e)
-    {
-        DecodingWindow decoding_window = new DecodingWindow();
-        decoding_window.Show();
-        this.Close();
+            // Добавляем запись в список и сохраняем JSON
+            _passwordEntries.Add(new PasswordEntry
+            {
+                EncryptedText = encrypted,
+                Key = key, // можно сохранять ключ (но это небезопасно, для демонстрации)
+                Date = DateTime.Now
+            });
+            SavePasswordsToJson();
+            UpdateSavedPasswordsList();
+        }
+
+        // Кнопка «Генерация» (заглушка)
+        public void onPasswordClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            MainWindow main_window = new MainWindow();
+            main_window.Show();
+            this.Close();
+        }
+
+        // Кнопка «Расшифровка» (заглушка)
+        public void onDecodingClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            DecodingWindow decoding_window =new DecodingWindow();
+            decoding_window.Show();
+            this.Close();
+        }
+
+        // Кнопка «Копировать»
+        public async void onCopyClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            string text = OutputTextBox.Text;
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            // Получаем буфер обмена Avalonia
+            if (TopLevel.GetTopLevel(this) is TopLevel topLevel)
+            {
+                var clipboard = topLevel.Clipboard;
+                if (clipboard != null)
+                {
+                    await clipboard.SetTextAsync(text);
+                    OutputTextBox.Text = "Скопировано!";
+                    // Возвращаем исходный текст через секунду
+                    Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await Task.Delay(1500);
+                        OutputTextBox.Text = text;
+                    });
+                }
+            }
+        }
+
+        // ---------- Вспомогательный класс для хранения данных ----------
+        public class PasswordEntry
+        {
+            public string EncryptedText { get; set; } = "";
+            public string Key { get; set; } = "";
+            public DateTime Date { get; set; } = DateTime.Now;
+        }
     }
 }

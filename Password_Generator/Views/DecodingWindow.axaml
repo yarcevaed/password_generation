@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Password_Generator.DecodingWindow"
         Title="DecodingWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/i.png"
         WindowState="Maximized"
         Background="#F5F7FA">
 
